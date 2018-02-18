@@ -1,6 +1,8 @@
 from hashlib import sha256
 import time
 import sys
+import pickle
+import os.path
 
 #Block class t0 create new blocks for the blockchain
 class block:
@@ -50,10 +52,19 @@ def main():
   blockchain.append(genesisBlock())
 
 if __name__== "__main__":
-    #init blockcahin
   blockchain = []
+  try:
+      read_file = open("blockchain.bl", 'rb')
+  except IOError:
+      print("Error opening the blockchain")
+
+  if os.path.exists("blockchain.bl"):
+      blockchain = pickle.load(read_file)
+  else:
+      write_file = open("blockchain.bl", 'wb')
+      main()
     #call main funciton to add the genesis block
-  main()
+
   while True:
       user_input = input("Add block to blockchain by typing your data or show to show the blockchain: ")
       #show the whole blockchain
@@ -63,6 +74,8 @@ if __name__== "__main__":
               print(str(a.currentHash)+"\n")
       #exit the script
       elif user_input == "exit":
+          write_file = open("blockchain.bl", 'wb')
+          pickle.dump(blockchain, write_file)
           sys.exit("Stopped by user input")
       #add a new block to the blockchain
       else:
